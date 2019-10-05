@@ -14,7 +14,6 @@ provider:
 
 plugins:
   - serverless-webpack
-  - serverless-apigwy-binary
   - serverless-offline
 
 functions:
@@ -31,7 +30,4 @@ functions:
       - http: GET /{file}
       - http: GET /static/css/{file}
       - http: GET /static/js/{file}
-      - http:
-          method: GET
-          path: /static/media/{file}
-          contentHandling: CONVERT_TO_BINARY
+      - http: GET /static/media/{file}

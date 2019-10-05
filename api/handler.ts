@@ -1,20 +1,28 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import * as AdmZip from "adm-zip";
-import * as path from "path";
+import * as mime from "mime-types";
 import "source-map-support/register";
 
 const publicUrl = process.env.PUBLIC_URL!;
+const bundleFileName = "html-bundle.zip";
+const resources = new AdmZip(bundleFileName).getEntries().reduce(
+  (map, entry) => {
+    map[entry.entryName] = entry;
+    return map;
+  },
+  {} as {
+    [name: string]: AdmZip.IZipEntry;
+  }
+);
 
-export const hello: APIGatewayProxyHandler = async event => {
-  return {
-    statusCode: 200,
-    ...mimeHeader("_.json"),
-    body: JSON.stringify(event)
-  };
-};
-
-const htmlBundle = new AdmZip("html-bundle.zip").getEntries();
 const NotFound = { statusCode: 404, body: "Not Found" };
+const textTypes = [".css", ".html", ".js", ".json", ".map", ".svg", ".txt"];
+
+const mimeHeader = (name: string) => ({
+  headers: {
+    "Content-Type": mime.contentType(name) || "application/octet-stream"
+  }
+});
 
 const translateToBundlePath = (requestUrl: string) => {
   let maybe = requestUrl.startsWith(publicUrl)
@@ -32,51 +40,23 @@ export const serve: APIGatewayProxyHandler = async event => {
   }
 
   const requestPath = translateToBundlePath(event.path);
-  console.log(requestPath);
-
-  const resource = htmlBundle.find(each => each.entryName === requestPath);
+  const resource = resources[requestPath];
   if (!resource) {
     return NotFound;
   }
-  const toBase64 = !isKnownTextType(resource.name);
+  const toBase64 = !textTypes.some(ext => requestPath.endsWith(ext));
   return {
     statusCode: 200,
     ...mimeHeader(resource.name),
     body: resource.getData().toString(toBase64 ? "base64" : "utf-8"),
     isBase64Encoded: toBase64
   };
-  publicUrl;
 };
 
-const isKnownTextType = (name: string) =>
-  knownTextTypes.includes(path.extname(name.toLowerCase()));
-const knownTextTypes = [
-  ".html",
-  ".js",
-  ".json",
-  ".css",
-  ".svg",
-  ".txt",
-  ".map"
-];
-const mimeTypes: { [ext: string]: string } = {
-  ".htm": "text/html",
-  ".html": "text/html",
-  ".js": "text/javascript",
-  ".json": "application/json",
-  ".css": "text/css",
-  ".gif": "image/gif",
-  ".png": "image/png",
-  ".jpeg": "image/jpeg",
-  ".jpg": "image/jpeg",
-  ".svg": "image/svg+xml",
-  ".txt": "text/plain",
-  ".ico": "image/vnd.microsoft.icon"
+export const hello: APIGatewayProxyHandler = async event => {
+  return {
+    statusCode: 200,
+    ...mimeHeader("_.json"),
+    body: JSON.stringify(event)
+  };
 };
-
-const mimeHeader = (name: string) => ({
-  headers: {
-    "Content-Type":
-      mimeTypes[path.extname(name.toLowerCase())] || "application/octet-stream"
-  }
-});
