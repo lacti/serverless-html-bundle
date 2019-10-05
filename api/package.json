@@ -4,7 +4,7 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.hs",
   "scripts": {
-    "offline": "sls offline",
+    "start": "sls offline --prefix ${STAGE}",
     "deploy": "sls deploy"
   },
   "dependencies": {
