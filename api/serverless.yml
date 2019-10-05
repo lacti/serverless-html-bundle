@@ -8,22 +8,14 @@ provider:
   stage: ${env:STAGE}
   apiGateway:
     binaryMediaTypes:
-      - "*/*"
-    environment:
+      - "image/*"
+  environment:
     PUBLIC_URL: ${env:PUBLIC_URL}
 
 plugins:
   - serverless-webpack
-  - serverless-apigw-binary
   - serverless-apigwy-binary
   - serverless-offline
-
-custom:
-  apigwBinary:
-    types:
-      - "image/png"
-      - "image/jpeg"
-      - "image/x+icon"
 
 functions:
   hello:

@@ -45,6 +45,7 @@ export const serve: APIGatewayProxyHandler = async event => {
     body: resource.getData().toString(toBase64 ? "base64" : "utf-8"),
     isBase64Encoded: toBase64
   };
+  publicUrl;
 };
 
 const isKnownTextType = (name: string) =>
@@ -59,15 +60,18 @@ const knownTextTypes = [
   ".map"
 ];
 const mimeTypes: { [ext: string]: string } = {
+  ".htm": "text/html",
   ".html": "text/html",
-  ".js": "application/javascript",
+  ".js": "text/javascript",
   ".json": "application/json",
   ".css": "text/css",
+  ".gif": "image/gif",
   ".png": "image/png",
+  ".jpeg": "image/jpeg",
   ".jpg": "image/jpeg",
   ".svg": "image/svg+xml",
-  ".txt": "plain/txt",
-  ".ico": "image/x-icon	"
+  ".txt": "text/plain",
+  ".ico": "image/vnd.microsoft.icon"
 };
 
 const mimeHeader = (name: string) => ({
