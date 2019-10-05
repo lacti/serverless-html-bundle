@@ -47,3 +47,10 @@ That is,
 Of course, `AWS credentials` should be set in this environment.
 
 Now, we can check the frontend pages from the endpoint of `serve` function.
+
+## References
+
+- [Use Serverless Lambda API Gateway for Binary Response](https://theleakycauldronblog.com/blog/use-serverless-lambda-api-gateway-for-binary-response/)
+
+Thanks, all!
+
