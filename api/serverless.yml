@@ -1,16 +1,29 @@
 service:
   name: html-bundle-api
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
-
-# Add the serverless-webpack plugin
-plugins:
-  - serverless-webpack
 
 provider:
   name: aws
   runtime: nodejs10.x
+  region: ap-northeast-2
+  stage: ${env:STAGE}
+  apiGateway:
+    binaryMediaTypes:
+      - "*/*"
+    environment:
+    PUBLIC_URL: ${env:PUBLIC_URL}
+
+plugins:
+  - serverless-webpack
+  - serverless-apigw-binary
+  - serverless-apigwy-binary
+  - serverless-offline
+
+custom:
+  apigwBinary:
+    types:
+      - "image/png"
+      - "image/jpeg"
+      - "image/x+icon"
 
 functions:
   hello:
@@ -19,3 +32,14 @@ functions:
       - http:
           method: get
           path: hello
+  serve:
+    handler: handler.serve
+    events:
+      - http: GET /
+      - http: GET /{file}
+      - http: GET /static/css/{file}
+      - http: GET /static/js/{file}
+      - http:
+          method: GET
+          path: /static/media/{file}
+          contentHandling: CONVERT_TO_BINARY
