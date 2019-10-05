@@ -4,7 +4,8 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.hs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "offline": "sls offline",
+    "deploy": "sls deploy"
   },
   "dependencies": {
     "adm-zip": "^0.4.13",
@@ -16,6 +17,7 @@
     "@types/aws-lambda": "^8.10.33",
     "@types/node": "10",
     "copy-webpack-plugin": "^5.0.4",
+    "serverless": "^1.53.0",
     "serverless-apigw-binary": "^0.4.4",
     "serverless-apigwy-binary": "^1.0.0",
     "serverless-offline": "^5.12.0",
